@@ -3,6 +3,9 @@
 namespace App\Exceptions;
 
 use App\Traits\Api\HandlesApiResponses;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\JsonResponse;
 use Throwable;
 use Illuminate\Foundation\Exceptions\Handler as BaseHandler;
 
@@ -13,8 +16,21 @@ class Handler extends BaseHandler
     public function render($request, Throwable $exception)
     {
         if ($request->is('api/*') || $request->wantsJson()) {
+            if ($exception instanceof AuthenticationException) {
+                return $this->respondError(
+                    message: 'Unauthenticated',
+                    statusCode: JsonResponse::HTTP_UNAUTHORIZED
+                );
+            }
+
+            if ($exception instanceof AuthorizationException) {
+                return $this->respondError(
+                    message: $exception->getMessage(),
+                    statusCode: JsonResponse::HTTP_FORBIDDEN
+                );
+            }
+
             return $this->respondError(
-                message: 'Server Error',
                 statusCode: method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 500
             );
         }
