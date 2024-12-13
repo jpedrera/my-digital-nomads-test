@@ -20,12 +20,12 @@ class DatabaseSeeder extends Seeder
 
         $this->addCustomToken($user);
 
-        $user->events()->saveMany(
-            Event::factory()->count(5)->make()
-        )->each(function (Event $event) use ($user) {
-            $this->addReviewForEvent($event, $user);
-            $this->addReservationForEvent($event, $user);
-        });
+        $user->events()->saveMany(Event::factory()->count(5)->make())
+            ->skip(1)
+            ->each(function (Event $event) use ($user) {
+                $this->addReviewForEvent($event, $user);
+                $this->addReservationForEvent($event, $user);
+            });
     }
 
     private function addReviewForEvent(Event $event, User $user): void

@@ -22,9 +22,21 @@ class StoreRequest extends BaseFormRequest
                 'min:1',
                 new SufficientTicketsAvailable($event),
             ],
-            function ($attribute, $value, $fail) use ($event) {
+
+        ];
+    }
+
+    protected function after()
+    {
+        $event = $this->route('event');
+        return [
+            function ($validator) use ($event) {
                 if ($event->hasReservationsClosed()) {
-                    $fail('Reservations are closed for this event.');
+                    $validator->errors()->add('event', 'Reservations are closed for this event.'
+                    );
+                }
+                if ($event->reservations()->where('user_id', $this->user()->id)->exists()) {
+                    $validator->errors()->add('event', 'You have already made a reservation for this event.');
                 }
             },
         ];

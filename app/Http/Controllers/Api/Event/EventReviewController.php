@@ -26,7 +26,10 @@ class EventReviewController extends BaseController
 
     public function store(ReviewStoreRequest $request, Event $event): JsonResponse
     {
-        $review = $this->reviewRepository->createReview($event, $request->validated());
+        $review = $this->reviewRepository->createReview(
+            $event,
+            array_merge(['user_id' => $request->user()->id], $request->validated())
+        );
 
         return $this->respondSuccess(
             ['review_id' => $review->id],
