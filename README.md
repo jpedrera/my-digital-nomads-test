@@ -15,6 +15,8 @@ then run
 
 
 I have attached a postman collection with the endpoints to test the API.
+This resides in the project root folder; `my_digital_nomads.postman_collection.json`
+
 This should use a prepopulated token from the seeder in the header, but you can create a new one by calling the register and login endpoint.
 
 ## Decisions made
